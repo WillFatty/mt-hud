@@ -34,7 +34,7 @@ $(document).ready(function(){
         }
 
         if (data.talking) {
-            $('#voice').css('background-color', "rgba(0, 97, 2, 0.641)")
+            $('#voice').css('background-color', "rgba(255, 255, 2, 0.641)")
         } else {
             $('#voice').css('background-color', "rgba(182, 182, 182, 0.641)")
         }
