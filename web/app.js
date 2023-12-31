@@ -25,6 +25,11 @@ $(document).ready(function(){
             $('#stamina').css('width', data.stamina+"%")
         } else { $('#stamina-container').fadeOut('slow') }
 
+        if (data.stress > 1) {
+            $('#stress-container').fadeIn('slow')
+            $('#stress').css('width', data.stress+"%")
+        } else { $('#stress-container').fadeOut('slow') }
+
         if (data.voice <= 1.5) {
             $('#voice').css('width', "20px")
         } else if (data.voice <= 3.0) {
@@ -44,6 +49,12 @@ $(document).ready(function(){
         $('#speed').text(data.speed)
 
         $('#fuel').text(data.fuel)
+
+        if (data.seatbeltOn === false) {
+            $('#seatbelt').css('color', 'red');
+        } else {
+            $('#seatbelt').css('color', '');
+        }
 
         if (data.gear == 0) {
             $('#gear').text('R')

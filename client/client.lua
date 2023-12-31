@@ -2,6 +2,23 @@ local vehicleHUDActive = false
 local playerHUDActive = false
 local hunger = 100
 local thirst = 100
+local stress = 0
+local seatbeltOn = false
+local showSeatbelt = false
+local speedMultiplier = Config.UseMPH and 2.23694 or 3.6
+local vehicle = nil
+local numgears = nil
+local topspeedGTA = nil
+local topspeedms = nil
+local acc = nil
+local hash = nil
+local selectedgear = 0 
+local hbrake = nil
+local manualon = false
+local incar = false
+local currspeedlimit = nil
+local ready = false
+local realistic = false
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     Wait(500)
@@ -54,6 +71,8 @@ CreateThread(function()
                 thirst = thirst,
                 hunger = hunger,
                 stamina = stamina,
+                dynamicStress = stress,
+                stress = stress,
                 voice = LocalPlayer.state['proximity'].distance,
                 talking = NetworkIsPlayerTalking(PlayerId()),
             })
@@ -73,6 +92,8 @@ CreateThread(function()
                     street1 = crossroads[1],
                     street2 = crossroads[2],
                     direction = GetDirectionText(GetEntityHeading(vehicle)),
+                    seatbeltOn = seatbeltOn,
+                    showSeatbelt = showSeatbelt
                 })
             else if vehicleHUDActive then vehicleHUDActive = false DisplayRadar(false) SendNUIMessage({ action = 'hideVehicleHUD' }) end end
         else
@@ -126,4 +147,109 @@ RegisterNetEvent("hud:client:LoadMap", function()
     SetRadarBigmapEnabled(true, false)
     Wait(50)
     SetRadarBigmapEnabled(false, false)
+end)
+
+RegisterNUICallback('dynamicStress', function(_, cb)
+    Wait(50)
+    Menu.isDynamicStressChecked = not Menu.isDynamicStressChecked
+    TriggerEvent('hud:client:playHudChecklistSound')
+    saveSettings()
+    cb('ok')
+end)
+
+RegisterNetEvent('hud:client:UpdateStress', function(newStress) -- Add this event with adding stress elsewhere
+    stress = newStress
+end)
+
+
+CreateThread(function() -- Speeding
+    while true do
+        if LocalPlayer.state.isLoggedIn then
+            local ped = PlayerPedId()
+            if IsPedInAnyVehicle(ped, false) then
+                local veh = GetVehiclePedIsIn(ped, false)
+                local vehClass = GetVehicleClass(veh)
+                local speed = GetEntitySpeed(veh) * speedMultiplier
+                local vehHash = GetEntityModel(veh)
+                if Config.VehClassStress[tostring(vehClass)] and not Config.WhitelistedVehicles[vehHash] then
+                    local stressSpeed
+                    if vehClass == 8 then -- Motorcycle exception for seatbelt
+                        stressSpeed = Config.MinimumSpeed
+                    else
+                        stressSpeed = seatbeltOn and Config.MinimumSpeed or Config.MinimumSpeedUnbuckled
+                    end
+                    if speed >= stressSpeed then
+                        TriggerServerEvent('hud:server:GainStress', math.random(1, 3))
+                    end
+                end
+            end
+        end
+        Wait(10000)
+    end
+end)
+
+-- Stress Screen Effects
+
+local function GetBlurIntensity(stresslevel)
+    for _, v in pairs(Config.Intensity['blur']) do
+        if stresslevel >= v.min and stresslevel <= v.max then
+            return v.intensity
+        end
+    end
+    return 1500
+end
+
+local function GetEffectInterval(stresslevel)
+    for _, v in pairs(Config.EffectInterval) do
+        if stresslevel >= v.min and stresslevel <= v.max then
+            return v.timeout
+        end
+    end
+    return 60000
+end
+
+CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        local effectInterval = GetEffectInterval(stress)
+        if stress >= 100 then
+            local BlurIntensity = GetBlurIntensity(stress)
+            local FallRepeat = math.random(2, 4)
+            local RagdollTimeout = FallRepeat * 1750
+            TriggerScreenblurFadeIn(1000.0)
+            Wait(BlurIntensity)
+            TriggerScreenblurFadeOut(1000.0)
+
+            if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
+                SetPedToRagdollWithFall(ped, RagdollTimeout, RagdollTimeout, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+            end
+
+            Wait(1000)
+            for _ = 1, FallRepeat, 1 do
+                Wait(750)
+                DoScreenFadeOut(200)
+                Wait(1000)
+                DoScreenFadeIn(200)
+                TriggerScreenblurFadeIn(1000.0)
+                Wait(BlurIntensity)
+                TriggerScreenblurFadeOut(1000.0)
+            end
+        elseif stress >= Config.MinimumStress then
+            local BlurIntensity = GetBlurIntensity(stress)
+            TriggerScreenblurFadeIn(1000.0)
+            Wait(BlurIntensity)
+            TriggerScreenblurFadeOut(1000.0)
+        end
+        Wait(effectInterval)
+    end
+end)
+
+-- seatbelt
+
+RegisterNetEvent('hud:client:ToggleShowSeatbelt', function()
+    showSeatbelt = not showSeatbelt
+end)
+
+RegisterNetEvent('seatbelt:client:ToggleSeatbelt', function() -- Triggered in smallresources
+    seatbeltOn = not seatbeltOn
 end)
