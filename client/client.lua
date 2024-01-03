@@ -19,6 +19,9 @@ local incar = false
 local currspeedlimit = nil
 local ready = false
 local realistic = false
+local nos = 0
+local nitroLevel = 0
+local nitroActive = 0
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     Wait(500)
@@ -93,7 +96,8 @@ CreateThread(function()
                     street2 = crossroads[2],
                     direction = GetDirectionText(GetEntityHeading(vehicle)),
                     seatbeltOn = seatbeltOn,
-                    showSeatbelt = showSeatbelt
+                    showSeatbelt = showSeatbelt,
+                    nos = nitroLevel
                 })
             else if vehicleHUDActive then vehicleHUDActive = false DisplayRadar(false) SendNUIMessage({ action = 'hideVehicleHUD' }) end end
         else
@@ -149,18 +153,9 @@ RegisterNetEvent("hud:client:LoadMap", function()
     SetRadarBigmapEnabled(false, false)
 end)
 
-RegisterNUICallback('dynamicStress', function(_, cb)
-    Wait(50)
-    Menu.isDynamicStressChecked = not Menu.isDynamicStressChecked
-    TriggerEvent('hud:client:playHudChecklistSound')
-    saveSettings()
-    cb('ok')
-end)
-
 RegisterNetEvent('hud:client:UpdateStress', function(newStress) -- Add this event with adding stress elsewhere
     stress = newStress
 end)
-
 
 CreateThread(function() -- Speeding
     while true do
