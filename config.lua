@@ -87,7 +87,7 @@ Config.WhitelistedVehicles = { -- Disable gaining stress from speeding in any ve
 }
 
 Config.WhitelistedJobs = { -- Disable stress completely for players with matching job or job type
-    ['leo'] = true,
+    ['police'] = true,
     ['ambulance'] = true
 }
 
