@@ -82,11 +82,11 @@ body {
     #vehicle-hud-container {
         display: none;
         border-radius: 3px;
-        width: 298px;
-        height: 220px;
+        width: 398px;
+        height: 294px;
         position: absolute;
-        left: 10px;
-        bottom: 33px;
+        left: 32px;
+        bottom: 43px;
         font-family: 'alarm clock';
         border: 2px solid #1b1d21;
         color: #ffffff;
