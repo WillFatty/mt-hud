@@ -53,7 +53,7 @@ $(document).ready(function(){
         if (data.seatbeltOn === false) {
             $('#seatbelt').css('color', 'red');
         } else {
-            $('#seatbelt').css('color', '');
+            $('#seatbelt').css('color', 'green');
         }
 
         if (data.gear == 0) {
