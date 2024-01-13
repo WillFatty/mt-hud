@@ -62,6 +62,10 @@ $(document).ready(function(){
             $('#gear').text(data.gear)
         }
 
+        $('#altitude').text(data.altitude)
+
+        $('#alt-txt').text(data.altitudetexto)
+
         $('#street1').text(data.street1)
 
         $('#street2').text(data.street2)

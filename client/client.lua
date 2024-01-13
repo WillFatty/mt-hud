@@ -22,6 +22,7 @@ local realistic = false
 local nos = 0
 local nitroLevel = 0
 local nitroActive = 0
+local showAltitude = false
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     Wait(500)
@@ -79,7 +80,8 @@ CreateThread(function()
                 voice = LocalPlayer.state['proximity'].distance,
                 talking = NetworkIsPlayerTalking(PlayerId()),
             })
-            if IsPedInAnyVehicle(ped) then
+            
+            if IsPedInAnyHeli(ped) or IsPedInAnyPlane(ped) then
                 if not vehicleHUDActive then
                     vehicleHUDActive = true
                     DisplayRadar(true)
@@ -99,7 +101,9 @@ CreateThread(function()
                     direction = GetDirectionText(GetEntityHeading(vehicle)),
                     seatbeltOn = seatbeltOn,
                     showSeatbelt = showSeatbelt,
-                    nos = nitroLevel
+                    nos = nitroLevel,
+                    altitude = math.ceil(GetEntityCoords(ped).z * 0.5),
+                    altitudetexto = "ALT"
                 })
             else if IsPedInAnyVehicle(ped) then
                 if not vehicleHUDActive then
@@ -119,7 +123,8 @@ CreateThread(function()
                     street1 = crossroads[1],
                     street2 = crossroads[2],
                     direction = GetDirectionText(GetEntityHeading(vehicle)),
-                    seatbelt = seatbeltOn,
+                    seatbeltOn = seatbeltOn,
+                    showSeatbelt = showSeatbelt,
                     altitude = "",
                     altitudetexto = ""
 
