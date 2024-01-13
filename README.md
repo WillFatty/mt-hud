@@ -1,7 +1,7 @@
 # MT Hud
 My version of [mt-hud](https://github.com/MT-Scripts/mt-hud) 
 
-Some CSS Changes from [lnrdoliveira](https://github.com/lnrdoliveira/mt-hud)
+Compatibility with hrs-gears, a belt icon, altimeter for aircraft [lnrdoliveira](https://github.com/lnrdoliveira/mt-hud)
 
 # Preview
 ![](https://i.imgur.com/kVDvtEl.jpeg)
