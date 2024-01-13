@@ -87,11 +87,13 @@ CreateThread(function()
                     SendNUIMessage({ action = 'showVehicleHUD' })
                 end
                 local crossroads = getCrossroads(vehicle)
+                local selectedgear = getSelectedGear()
+                local gearlol = getinfo(selectedgear)
                 SendNUIMessage({
                     action = 'updateVehicleHUD',
                     speed = math.ceil(GetEntitySpeed(vehicle) * Config.speedMultiplier),
                     fuel = math.ceil(GetVehicleFuelLevel(vehicle)),
-                    gear = GetVehicleCurrentGear(vehicle),
+                    gear = gearlol,
                     street1 = crossroads[1],
                     street2 = crossroads[2],
                     direction = GetDirectionText(GetEntityHeading(vehicle)),
@@ -99,19 +101,43 @@ CreateThread(function()
                     showSeatbelt = showSeatbelt,
                     nos = nitroLevel
                 })
-            else if vehicleHUDActive then vehicleHUDActive = false DisplayRadar(false) SendNUIMessage({ action = 'hideVehicleHUD' }) end end
-        else
-            vehicleHUDActive = false
-            DisplayRadar(false)
-            SendNUIMessage({ action = 'hideVehicleHUD' })
-            SendNUIMessage({ action = 'hidePlayerHUD' })
-            playerHUDActive = false
+            else if IsPedInAnyVehicle(ped) then
+                if not vehicleHUDActive then
+                    vehicleHUDActive = true
+                    DisplayRadar(true)
+                    TriggerEvent('hud:client:LoadMap')
+                    SendNUIMessage({ action = 'showVehicleHUD' })
+                end
+                local crossroads = getCrossroads(vehicle)
+                local selectedgear = getSelectedGear()
+                local gearlol = getinfo(selectedgear)
+                SendNUIMessage({
+                    action = 'updateVehicleHUD',
+                    speed = math.ceil(GetEntitySpeed(vehicle) * Config.speedMultiplier),
+                    fuel = math.ceil(GetVehicleFuelLevel(vehicle)),
+                    gear = gearlol,
+                    street1 = crossroads[1],
+                    street2 = crossroads[2],
+                    direction = GetDirectionText(GetEntityHeading(vehicle)),
+                    seatbelt = seatbeltOn,
+                    altitude = "",
+                    altitudetexto = ""
+
+                })
+                else if vehicleHUDActive then vehicleHUDActive = false DisplayRadar(false) SendNUIMessage({ action = 'hideVehicleHUD' }) end end
+            end
+            else
+                vehicleHUDActive = false
+                DisplayRadar(false)
+                SendNUIMessage({ action = 'hideVehicleHUD' })
+                SendNUIMessage({ action = 'hidePlayerHUD' })
+                playerHUDActive = false
+            end
+            SetBigmapActive(false, false)
+            SetRadarZoom(1000)
+            Wait(Config.updateDelay)
         end
-        SetBigmapActive(false, false)
-        SetRadarZoom(1000)
-        Wait(Config.updateDelay)
-    end
-end)
+    end)
 
 function GetDirectionText(heading)
     if ((heading >= 0 and heading < 45) or (heading >= 315 and heading < 360)) then
