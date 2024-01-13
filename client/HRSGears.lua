@@ -322,6 +322,13 @@ end
     end
 end)]]
 
+-- Register the key bindings
+Citizen.CreateThread(function()
+if Config.Keybinds then
+    RegisterKeyMapping('+gearUp', 'Gear Up', 'keyboard', 'LSHIFT')
+    RegisterKeyMapping('+gearDown', 'Gear Down', 'keyboard', 'LCONTROL')
+end
+end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0) 
