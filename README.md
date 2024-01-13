@@ -2,8 +2,9 @@
 The worst FiveM HUD ever made
 
 # Preview
-![Captura de ecrã 2023-12-22 213304](https://github.com/MT-Scripts/mt-hud/assets/89866234/51405f05-1b4a-42e0-93e7-43185634cd67)
-![Captura de ecrã 2023-12-22 213512](https://github.com/MT-Scripts/mt-hud/assets/89866234/f2461b50-e5ca-4706-99a3-0159e08f9e7d)
+![](https://i.imgur.com/kVDvtEl.jpeg)
+![](https://i.imgur.com/abwDRsJ.png)
+![](https://i.imgur.com/bSeBipM.png)
 
 # Features
 - Status HUD with health, armor, hunger, thirst and stamina
